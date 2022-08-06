@@ -6,7 +6,6 @@ import validators
 
 from tgbot.config import Config
 from tgbot.keyboards.inline.admin import send_all_callback_data, send_all_keyboard, SendAllAction, broadcast_message_keyboard
-from tgbot.models.db import db
 from tgbot.models.user import User
 from tgbot.models.user_tg import UserTG
 from tgbot.states import SendAllState
@@ -36,7 +35,7 @@ async def confirm_send(message: types.Message, user: UserTG, state: FSMContext):
 
 
 async def ask_to_change_buttons(call: types.CallbackQuery, user: UserTG, state: FSMContext):
-    text = f"""
+    text = """
 Введите <b>ВСЕ</b> кнопки в формате:
 
 <code>Текст кнопки1|ссылка кнопки1</code>
