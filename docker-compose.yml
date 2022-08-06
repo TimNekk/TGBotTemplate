@@ -1,0 +1,52 @@
+version: '3.3'
+
+services:
+  bot:
+    image: "${BOT_IMAGE_NAME:-tg_bot-image}"
+    container_name: "${BOT_CONTAINER_NAME:-tg_bot-container}"
+    stop_signal: SIGINT
+    build:
+      context: .
+    working_dir: "/usr/src/app/${BOT_NAME:-tg_bot}"
+    volumes:
+    - .:/usr/src/app/${BOT_NAME:-tg_bot}
+    command: python3 -m bot
+    restart: always
+    env_file:
+      - ".env"
+    depends_on:
+      - db
+      - redis
+    networks:
+    - tg_bot
+
+  db:
+    container_name: "${DB_CONTAINER_NAME:-db-container}"
+    image: postgres:14
+    environment:
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASS}
+        - POSTGRES_DB=${DB_NAME}
+    restart: always
+    ports:
+      - "${DB_EXPOSE_PORT:-5432}:5432"
+    networks:
+      - tg_bot
+    volumes:
+      - ./postgres:/var/lib/postgresql
+
+  redis:
+    container_name: "${REDIS_CONTAINER_NAME:-redis-container}"
+    image: redis:alpine
+    command: "redis-server --requirepass ${REDIS_PASS:-password123}"
+    restart: always
+    networks:
+      - tg_bot
+    volumes:
+      - ./redis:/data
+
+
+
+networks:
+  tg_bot:
+    driver: bridge
