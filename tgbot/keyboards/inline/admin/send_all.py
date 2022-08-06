@@ -34,7 +34,7 @@ def send_all_keyboard():
     return keyboard
 
 
-def broadcast_message_keyboard(buttons: list[list[str, str]]) -> InlineKeyboardMarkup:
+def broadcast_message_keyboard(buttons: list[list[str]]) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup()
 
     for button in buttons:
