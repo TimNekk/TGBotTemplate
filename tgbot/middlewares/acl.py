@@ -1,5 +1,3 @@
-from typing import Optional
-
 from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
@@ -8,7 +6,7 @@ from tgbot.models.user_tg import UserTG
 
 class ACLMiddleware(BaseMiddleware):
     @staticmethod
-    async def set_data(telegram_user: types.User, data: dict, deep_link: Optional[str] = None):
+    async def set_data(telegram_user: types.User, data: dict, deep_link: str | None = None):
         user = await UserTG.get(telegram_user.id)
 
         if user is None:

@@ -14,7 +14,7 @@ class UserTG(User):
     bot: Bot
 
     @property
-    def info(self) -> typing.Optional[str]:
+    def info(self) -> str | None:
         if self.first_name:
             return self.first_name
         elif self.last_name:
@@ -23,7 +23,7 @@ class UserTG(User):
             return self.username
 
     @property
-    def link(self) -> typing.Optional[str]:
+    def link(self) -> str | None:
         if self.username:
             return f"@{self.username}"
         return hlink(self.info, self.url if self.url else self.id)
