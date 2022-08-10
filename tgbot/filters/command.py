@@ -15,4 +15,4 @@ class CommandFilter(BoundFilter):
         if not isinstance(obj, types.Message):
             raise NotImplementedError("CommandFilter can only be used with Message")
         message: types.Message = obj
-        return f"/{self.command.command}" == message.text or self.command.alias == message.text
+        return message.text.startswith(f"/{self.command.command}") or self.command.alias == message.text
