@@ -16,10 +16,10 @@ from tgbot.services.broadcasting import send_to_admins
 from tgbot.services.setting_commands import set_bot_command
 
 
-async def main():
+async def main() -> None:
     config = load_config(".env")
 
-    logging.setup(config.misc.log_file_name)
+    logging.setup(config.log.file_name, config.log.rotation, config.log.retention)
     logger.info("Starting bot")
 
     if config.tg_bot.use_redis:

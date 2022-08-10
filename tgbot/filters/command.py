@@ -11,7 +11,7 @@ class CommandFilter(BoundFilter):
     key = 'command'
     command: CommandInfo
 
-    async def check(self, obj):
+    async def check(self, obj: types.base.TelegramObject) -> bool:
         if not isinstance(obj, types.Message):
             raise NotImplementedError("CommandFilter can only be used with Message")
         message: types.Message = obj

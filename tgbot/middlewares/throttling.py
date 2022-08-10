@@ -1,4 +1,5 @@
 import asyncio
+from typing import Callable
 
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import DEFAULT_RATE_LIMIT
@@ -7,7 +8,7 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
 
 
-def rate_limit(limit: int, key=None):
+def rate_limit(limit: int, key: str | None = None) -> Callable:
     """
     Decorator for configuring rate limit and key in different functions.
     :param limit:
@@ -15,7 +16,7 @@ def rate_limit(limit: int, key=None):
     :return:
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         setattr(func, 'throttling_rate_limit', limit)
         if key:
             setattr(func, 'throttling_key', key)
@@ -29,12 +30,12 @@ class ThrottlingMiddleware(BaseMiddleware):
     Simple middleware
     """
 
-    def __init__(self, limit=DEFAULT_RATE_LIMIT, key_prefix='antiflood_'):
+    def __init__(self, limit: float = DEFAULT_RATE_LIMIT, key_prefix: str = 'antiflood_'):
         self.rate_limit = limit
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message, data: dict):
+    async def on_process_message(self, message: types.Message, data: dict) -> None:
         """
         This handler is called when dispatcher receives a message
         :param message:
@@ -62,7 +63,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             # Cancel current handler
             raise CancelHandler()
 
-    async def message_throttled(self, message: types.Message, throttled: Throttled):
+    async def message_throttled(self, message: types.Message, throttled: Throttled) -> None:
         """
         Notify user only on first exceed and notify about unlocking only on last exceed
         :param message:

@@ -21,6 +21,7 @@ class UserTG(User):
             return self.last_name
         elif self.username:
             return self.username
+        return None
 
     @property
     def link(self) -> str | None:
@@ -32,7 +33,11 @@ class UserTG(User):
     def url(self) -> str:
         return f"tg://user?id={self.id}"
 
-    async def _execute_telegram_send_action(self, action: typing.Callable, *args, **kwargs):
+    async def _execute_telegram_send_action(self,
+                                            action: typing.Callable,
+                                            *args: typing.Any,
+                                            **kwargs: typing.Any
+                                            ) -> types.Message | base.Boolean | None:
         try:
             return await action(self.id, *args, **kwargs)
         except (exceptions.BotBlocked, exceptions.ChatNotFound, exceptions.UserDeactivated) as e:
@@ -40,8 +45,13 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+        return None
 
-    async def _execute_telegram_edit_action(self, action: typing.Callable, *args, **kwargs):
+    async def _execute_telegram_edit_action(self,
+                                            action: typing.Callable,
+                                            *args: typing.Any,
+                                            **kwargs: typing.Any
+                                            ) -> types.Message | base.Boolean | None:
         try:
             return await action(*args, **kwargs)
         except (exceptions.MessageToEditNotFound, exceptions.MessageCantBeEdited) as e:
@@ -52,6 +62,7 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except (exceptions.TelegramAPIError, exceptions.MessageNotModified) as e:
             logger.exception(f"{self}: {e}")
+        return None
 
     async def send_message(self,
                            text: base.String,
@@ -394,7 +405,7 @@ class UserTG(User):
                                protect_content: typing.Optional[base.Boolean] = None,
                                reply_to_message_id: typing.Optional[base.Integer] = None,
                                allow_sending_without_reply: typing.Optional[base.Boolean] = None,
-                               ) -> typing.List[types.Message]:
+                               ) -> typing.List[types.Message] | None:
         return await self._execute_telegram_send_action(self.bot.send_media_group,
                                                         media,
                                                         disable_notification,

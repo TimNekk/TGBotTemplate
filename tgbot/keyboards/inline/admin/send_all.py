@@ -15,11 +15,11 @@ class SendAllAction(StringEnum):
     CANCEL = auto()
 
 
-def make_send_all_callback_data(action: SendAllAction):
+def make_send_all_callback_data(action: SendAllAction) -> str:
     return send_all_callback_data.new(action=action)
 
 
-def send_all_keyboard():
+def send_all_keyboard() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup()
 
     keyboard.add(InlineKeyboardButton(text="Изменить кнопки ⚙️",

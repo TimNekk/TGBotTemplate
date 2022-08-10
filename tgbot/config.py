@@ -1,5 +1,6 @@
 from dataclasses import dataclass, fields
-from typing import List, Optional
+from datetime import time, timedelta, datetime
+from typing import List, Optional, Generator
 
 from aiogram.types import BotCommand
 from environs import Env
@@ -13,7 +14,7 @@ class CommandInfo:
     is_admin: bool = False
     bot_command: Optional[BotCommand] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.bot_command = BotCommand(self.command, self.description)
 
 
@@ -21,7 +22,7 @@ class CommandInfo:
 class Commands:
     send_all: CommandInfo
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[CommandInfo, None, None]:
         return (getattr(self, field.name) for field in fields(self))
 
 
@@ -34,7 +35,7 @@ class DbConfig:
     port: int
     uri: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.uri = f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
 
 
@@ -54,8 +55,15 @@ class TgBot:
 
 
 @dataclass
+class LogConfig:
+    file_name: str
+    rotation: time
+    retention: timedelta
+
+
+@dataclass
 class Miscellaneous:
-    log_file_name: str
+    pass
 
 
 @dataclass
@@ -63,12 +71,14 @@ class Config:
     tg_bot: TgBot
     db: DbConfig
     redis: RedisConfig
+    log: LogConfig
     misc: Miscellaneous
 
 
-def load_config(path: str = None):
+def load_config(path: str | None = None) -> Config:
     env = Env()
     env.read_env(path)
+
     return Config(
         tg_bot=TgBot(
             token=env.str("BOT_TOKEN"),
@@ -90,7 +100,10 @@ def load_config(path: str = None):
             password=env.str('REDIS_PASS'),
             port=env.int('REDIS_PORT'),
         ),
-        misc=Miscellaneous(
-            log_file_name=env.str("LOG_FILE_NAME")
-        )
+        log=LogConfig(
+            file_name=env.str('LOG_FILE_NAME'),
+            rotation=datetime.strptime(env.str('LOG_ROTATION'), '%H:%M').time(),
+            retention=timedelta(days=env.int('LOG_RETENTION')),
+        ),
+        misc=Miscellaneous()
     )
