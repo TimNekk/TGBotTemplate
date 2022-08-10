@@ -1,9 +1,10 @@
+from datetime import time, timedelta
 import sys
 
 from loguru import logger
 
 
-def setup(file_name: str = "log"):
+def setup(file_name: str = "log", rotation: time = time(), retention: timedelta = timedelta(days=3)):
     logger.remove()
     logger.add(sys.stderr, level="INFO")
-    logger.add(f"logs/{file_name}.log", rotation="00:00", level="DEBUG")
+    logger.add(f"logs/{file_name}.log", rotation=rotation, retention=retention, level="DEBUG")
