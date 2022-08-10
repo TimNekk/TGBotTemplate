@@ -6,7 +6,7 @@ from tgbot.models.user_tg import UserTG
 
 class ACLMiddleware(BaseMiddleware):
     @staticmethod
-    async def set_data(telegram_user: types.User, data: dict, deep_link: str | None = None):
+    async def set_data(telegram_user: types.User, data: dict, deep_link: str | None = None) -> None:
         user = await UserTG.get(telegram_user.id)
 
         if user is None:
@@ -24,8 +24,8 @@ class ACLMiddleware(BaseMiddleware):
         data["user"] = user
         data["deep_link"] = deep_link
 
-    async def on_pre_process_message(self, message: types.Message, data: dict):
+    async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
         await self.set_data(message.from_user, data, deep_link=message.get_args())
 
-    async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict):
+    async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
         await self.set_data(callback_query.from_user, data)

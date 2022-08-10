@@ -4,7 +4,7 @@ from aiogram.types import BotCommandScopeChat, BotCommandScopeDefault
 from tgbot.config import Config
 
 
-async def set_bot_command(bot: Bot, config: Config):
+async def set_bot_command(bot: Bot, config: Config) -> None:
     await bot.set_my_commands(
         commands=[command.bot_command for command in config.tg_bot.commands if not command.is_admin],
         scope=BotCommandScopeDefault()

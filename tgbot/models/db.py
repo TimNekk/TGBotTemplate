@@ -9,10 +9,10 @@ from loguru import logger
 db = Gino()
 
 
-class BaseModel(db.Model):
+class BaseModel(db.Model):  # type: ignore
     __abstract__ = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         model = self.__class__.__name__
         table: sa.Table = sa.inspect(self.__class__)
         primary_key_columns: List[sa.Column] = table.primary_key.columns
@@ -36,12 +36,12 @@ class TimedBaseModel(BaseModel):
     )
 
 
-async def on_startup(uri: str):
+async def on_startup(uri: str) -> None:
     logger.info("Setup PostgreSQL Connection")
     await db.set_bind(uri)
 
 
-async def on_shutdown():
+async def on_shutdown() -> None:
     bind = db.pop_bind()
     if bind:
         logger.info("Close PostgreSQL Connection")
