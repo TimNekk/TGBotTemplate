@@ -1,4 +1,5 @@
 from dataclasses import dataclass, fields
+from datetime import time, timedelta, datetime
 from typing import List, Optional
 
 from aiogram.types import BotCommand
@@ -54,8 +55,15 @@ class TgBot:
 
 
 @dataclass
+class LogConfig:
+    file_name: str
+    rotation: time
+    retention: timedelta
+
+
+@dataclass
 class Miscellaneous:
-    log_file_name: str
+    pass
 
 
 @dataclass
@@ -63,6 +71,7 @@ class Config:
     tg_bot: TgBot
     db: DbConfig
     redis: RedisConfig
+    log: LogConfig
     misc: Miscellaneous
 
 
@@ -90,7 +99,10 @@ def load_config(path: str = None):
             password=env.str('REDIS_PASS'),
             port=env.int('REDIS_PORT'),
         ),
-        misc=Miscellaneous(
-            log_file_name=env.str("LOG_FILE_NAME")
-        )
+        log=LogConfig(
+            file_name=env.str('LOG_FILE_NAME'),
+            rotation=datetime.strptime(env.str('LOG_ROTATION'), '%H:%M').time(),
+            retention=timedelta(days=env.int('LOG_RETENTION')),
+        ),
+        misc=Miscellaneous()
     )
