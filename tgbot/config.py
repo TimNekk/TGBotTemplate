@@ -21,6 +21,7 @@ class CommandInfo:
 @dataclass
 class Commands:
     send_all: CommandInfo
+    ping: CommandInfo
 
     def __iter__(self) -> Generator[CommandInfo, None, None]:
         return (getattr(self, field.name) for field in fields(self))
@@ -86,6 +87,7 @@ def load_config(path: str | None = None) -> Config:
             use_redis=env.bool("USE_REDIS"),
             commands=Commands(
                 send_all=CommandInfo("send_all", "Рассылка", is_admin=True),
+                ping=CommandInfo("ping", "Пинг", is_admin=True),
             )
         ),
         db=DbConfig(

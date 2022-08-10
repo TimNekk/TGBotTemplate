@@ -658,3 +658,17 @@ class UserTG(User):
                                             heading=heading,
                                             proximity_alert_radius=proximity_alert_radius,
                                             reply_markup=reply_markup)
+
+    async def delete_message(self,
+                             message_id: typing.Optional[base.Integer] = None,
+                             ) -> base.Boolean | None:
+        try:
+            return await self.bot.delete_message(self.id, message_id)
+        except (exceptions.MessageToDeleteNotFound, exceptions.MessageCantBeDeleted) as e:
+            logger.exception(f"{self}: {e.match}")
+        except (exceptions.BotBlocked, exceptions.ChatNotFound, exceptions.UserDeactivated) as e:
+            logger.debug(f"{self}: {e.match}")
+            await self.update(is_banned=True).apply()
+        except exceptions.TelegramAPIError as e:
+            logger.exception(f"{self}: {e}")
+        return None
