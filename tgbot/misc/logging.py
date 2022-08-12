@@ -4,7 +4,6 @@ import sys
 
 import aiogram_broadcaster
 import gino
-import sqlalchemy
 from loguru import logger
 
 
