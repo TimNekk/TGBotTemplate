@@ -25,13 +25,14 @@ class InterceptHandler(logging.Handler):
 
 
 def setup(file_name: str = "log", rotation: time = time(), retention: timedelta = timedelta(days=3)) -> None:
-    # Send default logging to loguru
-    logging.basicConfig(handlers=[InterceptHandler()], level=0)
-
     # Disable aiogram_broadcaster logging
-    logging.getLogger("root").setLevel(logging.FATAL)
+    logging.getLogger("aiogram_broadcaster.text_broadcaster").setLevel(logging.FATAL)
+    logging.getLogger("aiogram_broadcaster.message_broadcaster").setLevel(logging.FATAL)
 
     # Setup loguru
     logger.remove()
     logger.add(sys.stderr, level="INFO")
     logger.add(f"logs/{file_name}.log", rotation=rotation, retention=retention, level="DEBUG")
+
+    # Send default logging to loguru
+    logging.basicConfig(handlers=[InterceptHandler()], level=0)

@@ -1,7 +1,7 @@
 aiogram~=2.18
 aioredis~=2.0
 environs~=9.0
-aiogram-broadcaster
+git+https://github.com/TimNekk/aiogram_broadcaster.git
 gino
 loguru
 alembic
