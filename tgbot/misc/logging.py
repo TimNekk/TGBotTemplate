@@ -2,7 +2,6 @@ import logging
 from datetime import time, timedelta
 import sys
 
-import aiogram_broadcaster
 from loguru import logger
 
 
