@@ -2,6 +2,8 @@ import logging
 from datetime import time, timedelta
 import sys
 
+import aiogram_broadcaster
+import gino
 from loguru import logger
 
 
@@ -25,9 +27,9 @@ class InterceptHandler(logging.Handler):
 
 
 def setup(file_name: str = "log", rotation: time = time(), retention: timedelta = timedelta(days=3)) -> None:
-    # Disable aiogram_broadcaster logging
-    logging.getLogger("aiogram_broadcaster.text_broadcaster").setLevel(logging.FATAL)
-    logging.getLogger("aiogram_broadcaster.message_broadcaster").setLevel(logging.FATAL)
+    # Disable some packages logging
+    logging.getLogger(aiogram_broadcaster.__name__).setLevel(logging.FATAL)
+    logging.getLogger(gino.__name__).setLevel(logging.FATAL)
 
     # Setup loguru
     logger.remove()
