@@ -3,6 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.types import AllowedUpdates
 from loguru import logger
 
 from tgbot.config import load_config
@@ -34,7 +35,7 @@ async def main() -> None:
     await db.on_startup(config.db.uri)
     UserTG.bot = bot
 
-    register_middlewares(dp, config)
+    await register_middlewares(dp, config)
     register_filters(dp)
     register_handlers(dp)
 
@@ -42,7 +43,12 @@ async def main() -> None:
     await send_to_admins(bot, "Бот запущен")
 
     try:
-        await dp.start_polling()
+        await dp.start_polling(allowed_updates=[
+            AllowedUpdates.MESSAGE,
+            AllowedUpdates.CALLBACK_QUERY,
+            AllowedUpdates.CHAT_MEMBER,
+            AllowedUpdates.MY_CHAT_MEMBER
+        ])
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
