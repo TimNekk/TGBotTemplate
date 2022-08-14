@@ -12,5 +12,5 @@ async def start(message: types.Message, user: UserTG) -> None:
     await user.send_message(text)
 
 
-def register_start_handlers(dp: Dispatcher) -> None:
+def register(dp: Dispatcher) -> None:
     dp.register_message_handler(start, CommandStart())

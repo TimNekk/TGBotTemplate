@@ -11,7 +11,7 @@ from tgbot.models.user_tg import UserTG
 from tgbot.states import SendAllState
 
 
-async def handle_send_all(message: types.Message, user: UserTG, state: FSMContext) -> None:
+async def _handle_send_all(message: types.Message, user: UserTG, state: FSMContext) -> None:
     text = "<b>Отправьте сообщение для рассылки</b>"
     initial_message = await user.send_message(text)
 
@@ -19,7 +19,7 @@ async def handle_send_all(message: types.Message, user: UserTG, state: FSMContex
     await state.update_data(initial_message_id=initial_message.message_id)
 
 
-async def confirm_send(message: types.Message, user: UserTG, state: FSMContext) -> None:
+async def _confirm_send(message: types.Message, user: UserTG, state: FSMContext) -> None:
     data = await state.get_data()
     initial_message_id: int = data.get("initial_message_id")
 
@@ -34,7 +34,7 @@ async def confirm_send(message: types.Message, user: UserTG, state: FSMContext) 
     await state.update_data(broadcast_message_id=broadcast_message.message_id)
 
 
-async def ask_to_change_buttons(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
+async def _ask_to_change_buttons(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
     text = """
 Введите <b>ВСЕ</b> кнопки в формате:
 
@@ -51,7 +51,7 @@ async def ask_to_change_buttons(call: types.CallbackQuery, user: UserTG, state: 
     await state.update_data(buttons_message_id=buttons_message.message_id)
 
 
-async def change_buttons(message: types.Message, user: UserTG, state: FSMContext) -> None:
+async def _change_buttons(message: types.Message, user: UserTG, state: FSMContext) -> None:
     data = await state.get_data()
     buttons_message_id: int = data.get("buttons_message_id")
     broadcast_message_id: int = data.get("broadcast_message_id")
@@ -71,7 +71,7 @@ async def change_buttons(message: types.Message, user: UserTG, state: FSMContext
     await SendAllState.waiting_for_confirm.set()
 
 
-async def cancel(call: types.CallbackQuery, state: FSMContext) -> None:
+async def _cancel(call: types.CallbackQuery, state: FSMContext) -> None:
     data = await state.get_data()
     broadcast_message_id: int = data.get("broadcast_message_id")
     await state.finish()
@@ -80,7 +80,7 @@ async def cancel(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.bot.delete_message(call.message.chat.id, broadcast_message_id)
 
 
-async def start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
+async def _start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
     data = await state.get_data()
     broadcast_message_id: int = data.get("broadcast_message_id")
     keyboard: types.InlineKeyboardMarkup = data.get("keyboard")
@@ -96,27 +96,27 @@ async def start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMCon
     await user.send_message("<b>Рассылка закончилась!</b>")
 
 
-def register_send_all_handlers(dp: Dispatcher) -> None:
+def register(dp: Dispatcher) -> None:
     config: Config = dp.bot.get("config")
-    dp.register_message_handler(handle_send_all,
+    dp.register_message_handler(_handle_send_all,
                                 command=config.tg_bot.commands.send_all,
                                 is_admin=True)
-    dp.register_message_handler(confirm_send,
+    dp.register_message_handler(_confirm_send,
                                 content_types=ContentType.ANY,
                                 is_admin=True,
                                 state=SendAllState.waiting_for_message)
-    dp.register_callback_query_handler(ask_to_change_buttons,
+    dp.register_callback_query_handler(_ask_to_change_buttons,
                                        send_all.setup_callback_data.filter(action=send_all.Action.BUTTONS()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
-    dp.register_callback_query_handler(cancel,
+    dp.register_callback_query_handler(_cancel,
                                        send_all.setup_callback_data.filter(action=send_all.Action.CANCEL()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
-    dp.register_message_handler(change_buttons,
+    dp.register_message_handler(_change_buttons,
                                 is_admin=True,
                                 state=SendAllState.waiting_for_buttons)
-    dp.register_callback_query_handler(start_broadcast,
+    dp.register_callback_query_handler(_start_broadcast,
                                        send_all.setup_callback_data.filter(action=send_all.Action.SEND()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
