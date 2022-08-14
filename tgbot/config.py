@@ -53,6 +53,7 @@ class TgBot:
     admin_ids: List[int]
     use_redis: bool
     commands: Commands
+    subscription_channels_ids: List[int]
 
 
 @dataclass
@@ -85,6 +86,7 @@ def load_config(path: str | None = None) -> Config:
             token=env.str("BOT_TOKEN"),
             admin_ids=list(map(int, env.list("ADMINS"))),
             use_redis=env.bool("USE_REDIS"),
+            subscription_channels_ids=list(map(int, env.list("SUBSCRIPTION_CHANNELS_IDS"))),
             commands=Commands(
                 send_all=CommandInfo("send_all", "Рассылка", is_admin=True),
                 ping=CommandInfo("ping", "Пинг", is_admin=True),
