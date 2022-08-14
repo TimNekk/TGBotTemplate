@@ -1,11 +1,11 @@
 from aiogram import Dispatcher
 
-from .admin import register_admin_handlers
-from .start import register_start_handlers
-from .subscription import register_subscription_handlers
+from tgbot.handlers import admin
+from tgbot.handlers import start
+from tgbot.handlers import subscription
 
 
-def register_handlers(dp: Dispatcher) -> None:
-    register_admin_handlers(dp)
-    register_start_handlers(dp)
-    register_subscription_handlers(dp)
+def register(dp: Dispatcher) -> None:
+    admin.register(dp)
+    start.register(dp)
+    subscription.register(dp)

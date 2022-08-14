@@ -9,7 +9,7 @@ from .throttling import ThrottlingMiddleware
 from .subscription import SubscriptionMiddleware
 
 
-async def register_middlewares(dp: Dispatcher, config: Config) -> None:
+async def register(dp: Dispatcher, config: Config) -> None:
     dp.setup_middleware(EnvironmentMiddleware(config=config))
     dp.setup_middleware(ACLMiddleware())
     dp.setup_middleware(LoggingMiddleware())

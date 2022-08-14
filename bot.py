@@ -6,10 +6,11 @@ from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.types import AllowedUpdates
 from loguru import logger
 
+
 from tgbot.config import load_config
-from tgbot.filters import register_filters
-from tgbot.handlers import register_handlers
-from tgbot.middlewares import register_middlewares
+from tgbot import filters
+from tgbot import handlers
+from tgbot import middlewares
 from tgbot.misc import logging
 from tgbot.models import db
 from tgbot.models.user_tg import UserTG
@@ -35,9 +36,9 @@ async def main() -> None:
     await db.on_startup(config.db.uri)
     UserTG.bot = bot
 
-    await register_middlewares(dp, config)
-    register_filters(dp)
-    register_handlers(dp)
+    await middlewares.register(dp, config)
+    filters.register(dp)
+    handlers.register(dp)
 
     await set_bot_command(bot, config)
     await send_to_admins(bot, "Бот запущен")
