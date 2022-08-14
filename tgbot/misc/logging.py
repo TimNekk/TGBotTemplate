@@ -26,7 +26,7 @@ class InterceptHandler(logging.Handler):
         logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 
-def setup(file_name: str = "log", rotation: time = time(), retention: timedelta = timedelta(days=3)) -> None:
+def setup(file_name: str = "log.log", rotation: time = time(), retention: timedelta = timedelta(days=3)) -> None:
     # Disable some packages logging
     logging.getLogger(aiogram_broadcaster.__name__).setLevel(logging.FATAL)
     logging.getLogger(gino.__name__).setLevel(logging.FATAL)
@@ -34,7 +34,7 @@ def setup(file_name: str = "log", rotation: time = time(), retention: timedelta 
     # Setup loguru
     logger.remove()
     logger.add(sys.stderr, level="INFO")
-    logger.add(f"logs/{file_name}.log", rotation=rotation, retention=retention, level="DEBUG")
+    logger.add(f"logs/{file_name}", rotation=rotation, retention=retention, level="DEBUG")
 
     # Send default logging to loguru
     logging.basicConfig(handlers=[InterceptHandler()], level=0)
