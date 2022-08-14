@@ -98,7 +98,7 @@ async def start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMCon
 
 def register_send_all_handlers(dp: Dispatcher) -> None:
     config: Config = dp.bot.get("config")
-    dp.register_message_handler(send_all,
+    dp.register_message_handler(handle_send_all,
                                 command=config.tg_bot.commands.send_all,
                                 is_admin=True)
     dp.register_message_handler(confirm_send,
