@@ -6,30 +6,30 @@ from aiogram.utils.callback_data import CallbackData
 from tgbot.misc.string_enum import StringEnum
 
 
-send_all_callback_data = CallbackData("send_all", "action")
-
-
-class SendAllAction(StringEnum):
+class Action(StringEnum):
     BUTTONS = auto()
     SEND = auto()
     CANCEL = auto()
 
 
-def make_send_all_callback_data(action: SendAllAction) -> str:
-    return send_all_callback_data.new(action=action)
+setup_callback_data = CallbackData("send_all", "action")
 
 
-def send_all_keyboard() -> InlineKeyboardMarkup:
+def _make_setup_callback_data(action: Action) -> str:
+    return setup_callback_data.new(action=action)
+
+
+def setup_keyboard() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup()
 
     keyboard.add(InlineKeyboardButton(text="Изменить кнопки ⚙️",
-                                      callback_data=make_send_all_callback_data(SendAllAction.BUTTONS)))
+                                      callback_data=_make_setup_callback_data(Action.BUTTONS)))
 
     keyboard.add(InlineKeyboardButton(text="Отправить 📩",
-                                      callback_data=make_send_all_callback_data(SendAllAction.SEND)))
+                                      callback_data=_make_setup_callback_data(Action.SEND)))
 
     keyboard.add(InlineKeyboardButton(text="Отмена ❌",
-                                      callback_data=make_send_all_callback_data(SendAllAction.CANCEL)))
+                                      callback_data=_make_setup_callback_data(Action.CANCEL)))
 
     return keyboard
 

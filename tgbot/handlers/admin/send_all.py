@@ -5,14 +5,13 @@ from aiogram_broadcaster import MessageBroadcaster
 import validators
 
 from tgbot.config import Config
-from tgbot.keyboards.inline.admin import send_all_callback_data, send_all_keyboard, SendAllAction, \
-    broadcast_message_keyboard
+from tgbot.keyboards.inline.admin import send_all
 from tgbot.models.user import User
 from tgbot.models.user_tg import UserTG
 from tgbot.states import SendAllState
 
 
-async def send_all(message: types.Message, user: UserTG, state: FSMContext) -> None:
+async def handle_send_all(message: types.Message, user: UserTG, state: FSMContext) -> None:
     text = "<b>Отправьте сообщение для рассылки</b>"
     initial_message = await user.send_message(text)
 
@@ -29,7 +28,7 @@ async def confirm_send(message: types.Message, user: UserTG, state: FSMContext) 
 
     broadcast_message = await message.send_copy(user.id)
     await user.send_message("<b>Все пользователям будет отправлено сообщение 👆</b>",
-                            reply_markup=send_all_keyboard())
+                            reply_markup=send_all.setup_keyboard())
 
     await SendAllState.waiting_for_confirm.set()
     await state.update_data(broadcast_message_id=broadcast_message.message_id)
@@ -65,7 +64,7 @@ async def change_buttons(message: types.Message, user: UserTG, state: FSMContext
                            for button in message.text.split("\n")]))
 
     if buttons:
-        keyboard = broadcast_message_keyboard(buttons)
+        keyboard = send_all.broadcast_message_keyboard(buttons)
         await user.edit_message_reply_markup(broadcast_message_id, reply_markup=keyboard)
         await state.update_data(keyboard=keyboard)
 
@@ -107,17 +106,17 @@ def register_send_all_handlers(dp: Dispatcher) -> None:
                                 is_admin=True,
                                 state=SendAllState.waiting_for_message)
     dp.register_callback_query_handler(ask_to_change_buttons,
-                                       send_all_callback_data.filter(action=SendAllAction.BUTTONS()),
+                                       send_all.setup_callback_data.filter(action=send_all.Action.BUTTONS()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
     dp.register_callback_query_handler(cancel,
-                                       send_all_callback_data.filter(action=SendAllAction.CANCEL()),
+                                       send_all.setup_callback_data.filter(action=send_all.Action.CANCEL()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
     dp.register_message_handler(change_buttons,
                                 is_admin=True,
                                 state=SendAllState.waiting_for_buttons)
     dp.register_callback_query_handler(start_broadcast,
-                                       send_all_callback_data.filter(action=SendAllAction.SEND()),
+                                       send_all.setup_callback_data.filter(action=send_all.Action.SEND()),
                                        is_admin=True,
                                        state=SendAllState.waiting_for_confirm)
