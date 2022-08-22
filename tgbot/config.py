@@ -45,6 +45,7 @@ class RedisConfig:
     host: str
     port: int
     password: str
+    pool_size: int
 
 
 @dataclass
@@ -103,6 +104,7 @@ def load_config(path: str | None = None) -> Config:
             host=env.str('REDIS_HOST'),
             password=env.str('REDIS_PASS'),
             port=env.int('REDIS_PORT'),
+            pool_size=env.int('REDIS_POOL_SIZE'),
         ),
         log=LogConfig(
             file_name=env.str('LOG_FILE_NAME'),

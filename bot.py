@@ -25,7 +25,10 @@ async def main() -> None:
     logger.info("Starting bot")
 
     if config.tg_bot.use_redis:
-        storage = RedisStorage2(host=config.redis.host, port=config.redis.port, password=config.redis.password)
+        storage = RedisStorage2(host=config.redis.host,
+                                port=config.redis.port,
+                                password=config.redis.password,
+                                pool_size=config.redis.pool_size)
     else:
         storage = MemoryStorage()
 
