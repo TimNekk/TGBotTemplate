@@ -61,7 +61,8 @@ class SubscriptionMiddleware(BaseMiddleware):
         keyboard = subscription.keyboard(channels_for_subscription)
 
         if call and callback_data and subscription.callback_data.prefix in callback_data.values():
-            await call.answer(text=f"Подпишитесь на {'все каналы' if len(channels_for_subscription) > 1 else 'канал'}!")
+            text = f"Подпишитесь на {'все каналы' if len(channels_for_subscription) > 1 else 'канал'}!"
+            await user.answer_callback_query(callback_query_id=call.id, text=text)
             if message.reply_markup != keyboard:
                 await user.edit_message_text(text=text, message_id=message.message_id, reply_markup=keyboard)
             raise CancelHandler()
