@@ -8,8 +8,8 @@ from tgbot.models.user_tg import UserTG
 
 @do_not_answer()
 async def _handle_subscription_callback(call: types.CallbackQuery, user: UserTG) -> None:
-    await call.answer(text="Доступ разрешен. Можете пользоваться ботом.")
-    await call.message.delete()
+    await user.answer_callback_query(call.id, text="Доступ разрешен. Можете пользоваться ботом.")
+    await user.delete_message(call.message.message_id)
     await start(call.message, user)
 
 

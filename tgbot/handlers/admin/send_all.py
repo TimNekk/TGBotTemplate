@@ -23,8 +23,8 @@ async def _confirm_send(message: types.Message, user: UserTG, state: FSMContext)
     data = await state.get_data()
     initial_message_id: int = data.get("initial_message_id")
 
-    await message.bot.delete_message(message.chat.id, initial_message_id)
-    await message.delete()
+    await user.delete_message(initial_message_id)
+    await user.delete_message(message.message_id)
 
     broadcast_message = await message.send_copy(user.id)
     await user.send_message("<b>Все пользователям будет отправлено сообщение 👆</b>",
@@ -56,8 +56,8 @@ async def _change_buttons(message: types.Message, user: UserTG, state: FSMContex
     buttons_message_id: int = data.get("buttons_message_id")
     broadcast_message_id: int = data.get("broadcast_message_id")
 
-    await message.bot.delete_message(message.chat.id, buttons_message_id)
-    await message.delete()
+    await user.delete_message(buttons_message_id)
+    await user.delete_message(message.message_id)
 
     buttons = list(filter(lambda button: len(button) == 2 and validators.url(button[1]),
                           [[button_args.strip() for button_args in button.split("|")]
@@ -71,13 +71,13 @@ async def _change_buttons(message: types.Message, user: UserTG, state: FSMContex
     await SendAllState.waiting_for_confirm.set()
 
 
-async def _cancel(call: types.CallbackQuery, state: FSMContext) -> None:
+async def _cancel(call: types.CallbackQuery, state: FSMContext, user: UserTG) -> None:
     data = await state.get_data()
     broadcast_message_id: int = data.get("broadcast_message_id")
     await state.finish()
 
-    await call.message.delete()
-    await call.bot.delete_message(call.message.chat.id, broadcast_message_id)
+    await user.delete_message(call.message.message_id)
+    await user.delete_message(broadcast_message_id)
 
 
 async def _start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
@@ -90,7 +90,7 @@ async def _start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMCo
 
     await user.send_message(f'Рассылка на всех пользователей (<b>{len(users_id)}</b>) началась!')
     broadcast_message = await call.bot.forward_message(call.message.chat.id, call.message.chat.id, broadcast_message_id)
-    await broadcast_message.delete()
+    await user.delete_message(broadcast_message.message_id)
     await MessageBroadcaster(chats=users_id, message=broadcast_message, reply_markup=keyboard).run()
 
     await user.send_message("<b>Рассылка закончилась!</b>")

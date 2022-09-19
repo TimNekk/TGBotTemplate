@@ -32,7 +32,7 @@ async def _ping(message: types.Message, state: FSMContext, user: UserTG, config:
 async def _get_ping_data(message: types.Message, state: FSMContext, user: UserTG, config: Config) -> None:
     delta = _get_time_delta(message.date)
 
-    await message.delete()
+    await user.delete_message(message.message_id)
 
     data = await state.get_data()
     aim: int = data.get("aim")
