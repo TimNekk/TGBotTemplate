@@ -672,3 +672,47 @@ class UserTG(User):
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
         return None
+
+    async def answer_callback_query(self,
+                                    callback_query_id: base.String,
+                                    text: typing.Optional[base.String] = None,
+                                    show_alert: typing.Optional[base.Boolean] = None,
+                                    url: typing.Optional[base.String] = None,
+                                    cache_time: typing.Optional[base.Integer] = None,
+                                    ) -> base.Boolean | None:
+        try:
+            return await self.bot.answer_callback_query(callback_query_id,
+                                                        text,
+                                                        show_alert,
+                                                        url,
+                                                        cache_time)
+        except exceptions.InvalidQueryID as e:
+            logger.exception(f"{self}: {e.match}")
+        except (exceptions.BotBlocked, exceptions.ChatNotFound, exceptions.UserDeactivated) as e:
+            logger.debug(f"{self}: {e.match}")
+            await self.update(is_banned=True).apply()
+        except exceptions.TelegramAPIError as e:
+            logger.exception(f"{self}: {e}")
+        return None
+
+    async def forward_message(self,
+                              chat_id: typing.Union[base.Integer, base.String],
+                              from_chat_id: typing.Union[base.Integer, base.String],
+                              message_id: base.Integer,
+                              disable_notification: typing.Optional[base.Boolean] = None,
+                              protect_content: typing.Optional[base.Boolean] = None,
+                              ) -> types.Message | None:
+        try:
+            return await self.bot.forward_message(chat_id,
+                                                  from_chat_id,
+                                                  message_id,
+                                                  disable_notification,
+                                                  protect_content)
+        except (exceptions.MessageToForwardNotFound, exceptions.MessageCantBeForwarded) as e:
+            logger.exception(f"{self}: {e.match}")
+        except (exceptions.BotBlocked, exceptions.ChatNotFound, exceptions.UserDeactivated) as e:
+            logger.debug(f"{self}: {e.match}")
+            await self.update(is_banned=True).apply()
+        except exceptions.TelegramAPIError as e:
+            logger.exception(f"{self}: {e}")
+        return None
