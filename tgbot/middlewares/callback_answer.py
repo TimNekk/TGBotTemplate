@@ -39,9 +39,10 @@ class CallbackAnswerMiddleware(BaseMiddleware):
         if getattr(handler, 'do_not_answer', None):
             return
 
-        user: UserTG = data.get('user')
-        if not user:
+        user = data.get('user')
+        if not user or not isinstance(user, UserTG):
             logger.exception('CallbackAnswerMiddleware can not find user in data')
+            return
 
         await user.answer_callback_query(callback_query_id=call.id,
                                          text=getattr(handler, 'answer_text', None),
