@@ -1,11 +1,9 @@
-import asyncio
-
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.types import AllowedUpdates
+from asyncio import run
 from loguru import logger
-
 
 from tgbot.config import load_config
 from tgbot import filters
@@ -62,7 +60,7 @@ async def main() -> None:
 
 if __name__ == '__main__':
     try:
-        asyncio.run(main())
+        run(main())
     except (KeyboardInterrupt, SystemExit):
         logger.info("Bot stopped!")
         raise SystemExit(0)
