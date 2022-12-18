@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10.1"]
+        python-version: ["3.10"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -22,7 +22,7 @@ jobs:
         pip install mypy flake8
     - name: Analysing the code with mypy
       run: |
-        mypy . --install-types --non-interactive
+        mypy tgbot --install-types --non-interactive
     - name: Analysing the code with flake8
       run: |
         flake8
