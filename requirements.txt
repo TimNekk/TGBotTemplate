@@ -1,4 +1,4 @@
-aiogram~=2.18
+aiogram==2.23.1
 aioredis~=2.0
 environs~=9.0
 git+https://github.com/TimNekk/aiogram_broadcaster.git
