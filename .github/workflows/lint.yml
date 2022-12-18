@@ -22,7 +22,7 @@ jobs:
         pip install mypy flake8
     - name: Analysing the code with mypy
       run: |
-        mypy . --install-types --non-interactive
+        mypy tgbot --install-types --non-interactive
     - name: Analysing the code with flake8
       run: |
         flake8

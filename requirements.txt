@@ -1,9 +1,9 @@
-aiogram~=2.18
+aiogram==2.23.1
 aioredis~=2.0
 environs~=9.0
 git+https://github.com/TimNekk/aiogram_broadcaster.git
-gino
-loguru
-alembic
-psycopg2
-validators
+gino==1.0.1
+loguru==0.6.0
+alembic==1.8.1
+psycopg2==2.9.3
+validators==0.20.0

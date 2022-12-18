@@ -89,8 +89,8 @@ def load_config(path: str | None = None) -> Config:
             use_redis=env.bool("USE_REDIS"),
             subscription_channels_ids=list(map(int, env.list("SUBSCRIPTION_CHANNELS_IDS"))),
             commands=Commands(
-                send_all=CommandInfo("send_all", "Рассылка", is_admin=True),
-                ping=CommandInfo("ping", "Пинг", is_admin=True),
+                send_all=CommandInfo("send_all", "Запустить рассылку", is_admin=True),
+                ping=CommandInfo("ping", "Узнать пинг", is_admin=True),
             )
         ),
         db=DbConfig(
