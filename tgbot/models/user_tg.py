@@ -54,13 +54,13 @@ class UserTG(User):
                                             ) -> types.Message | base.Boolean | None:
         try:
             return await action(*args, **kwargs)
-        except (exceptions.MessageToEditNotFound, exceptions.MessageCantBeEdited) as e:
+        except (exceptions.MessageToEditNotFound, exceptions.MessageCantBeEdited, exceptions.MessageNotModified) as e:
             logger.debug(f"{self}: {e.match}")
             raise e
         except (exceptions.BotBlocked, exceptions.ChatNotFound, exceptions.UserDeactivated) as e:
             logger.debug(f"{self}: {e.match}")
             await self.update(is_banned=True).apply()
-        except (exceptions.TelegramAPIError, exceptions.MessageNotModified) as e:
+        except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
         return None
 
