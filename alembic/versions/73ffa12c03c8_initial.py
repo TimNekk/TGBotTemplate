@@ -22,7 +22,7 @@ def upgrade() -> None:
                     sa.Column('username', sa.String(length=32), nullable=True),
                     sa.Column('first_name', sa.String(length=255), nullable=True),
                     sa.Column('last_name', sa.String(length=255), nullable=True),
-                    sa.Column('is_banned', sa.Boolean(), nullable=False),
+                    sa.Column('is_banned', sa.Boolean(), server_default='False', nullable=False),
                     sa.Column('deep_link', sa.String(length=225), nullable=True),
                     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
                     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),

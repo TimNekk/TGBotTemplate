@@ -8,5 +8,5 @@ class User(TimedBaseModel):
     username = db.Column(db.String(32), nullable=True)
     first_name = db.Column(db.String(255), nullable=True)
     last_name = db.Column(db.String(255), nullable=True)
-    is_banned = db.Column(db.Boolean, nullable=False, default=False)
+    is_banned = db.Column(db.Boolean, server_default="False", nullable=False)
     deep_link = db.Column(db.String(225), nullable=True)
