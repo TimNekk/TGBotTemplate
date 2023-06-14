@@ -35,7 +35,7 @@ services:
     networks:
       - tg_bot
     volumes:
-      - ./postgres:/var/lib/postgresql
+      - postgres:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
       interval: 1s
@@ -50,10 +50,12 @@ services:
     networks:
       - tg_bot
     volumes:
-      - ./redis:/data
-
-
+      - redis:/data
 
 networks:
   tg_bot:
     driver: bridge
+
+volumes:
+    postgres:
+    redis:
