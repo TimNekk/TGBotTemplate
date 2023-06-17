@@ -48,7 +48,6 @@ async def main() -> None:
         await dp.start_polling(allowed_updates=[
             AllowedUpdates.MESSAGE,
             AllowedUpdates.CALLBACK_QUERY,
-            AllowedUpdates.CHAT_MEMBER,
             AllowedUpdates.MY_CHAT_MEMBER
         ])
     finally:
