@@ -1,9 +1,10 @@
-aiogram==2.23.1
+aiogram==2.25.1
 aioredis~=2.0
-environs~=9.0
+environs~=9.5
 git+https://github.com/TimNekk/aiogram_broadcaster.git
 gino==1.0.1
-loguru==0.6.0
-alembic==1.8.1
-psycopg2==2.9.3
+loguru==0.7.0
+alembic==1.11.1
+psycopg2==2.9.6
 validators==0.20.0
+Flake8-pyproject==1.2.3
