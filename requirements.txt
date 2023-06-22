@@ -7,4 +7,3 @@ loguru==0.7.0
 alembic==1.11.1
 psycopg2==2.9.6
 validators==0.20.0
-Flake8-pyproject==1.2.3
