@@ -35,6 +35,8 @@ async def _confirm_send(message: types.Message, user: UserTG, state: FSMContext)
 
 
 async def _ask_to_change_buttons(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
+    await call.answer()
+
     text = """
 Введите <b>ВСЕ</b> кнопки в формате:
 
@@ -66,7 +68,7 @@ async def _change_buttons(message: types.Message, user: UserTG, state: FSMContex
     if buttons:
         keyboard = send_all.broadcast_message_keyboard(buttons)
         await user.edit_message_reply_markup(broadcast_message_id, reply_markup=keyboard)
-        await state.update_data(keyboard=keyboard)
+        await state.update_data(buttons=buttons)
 
     await SendAllState.waiting_for_confirm.set()
 
@@ -81,14 +83,18 @@ async def _cancel(call: types.CallbackQuery, state: FSMContext, user: UserTG) ->
 
 
 async def _start_broadcast(call: types.CallbackQuery, user: UserTG, state: FSMContext) -> None:
+    await call.answer()
+
     data = await state.get_data()
     broadcast_message_id: int = data.get("broadcast_message_id")
-    keyboard: types.InlineKeyboardMarkup = data.get("keyboard")
+    buttons: list[list[str]] | None = data.get("buttons")
+    keyboard = send_all.broadcast_message_keyboard(buttons) if buttons else None
     await state.finish()
 
     users_id = [user_id[0] for user_id in await User.select("id").where(User.is_banned == False).gino.all()]
 
     await user.send_message(f'Рассылка на всех пользователей (<b>{len(users_id)}</b>) началась!')
+
     broadcast_message = await call.bot.forward_message(call.message.chat.id, call.message.chat.id, broadcast_message_id)
     await user.delete_message(broadcast_message.message_id)
     await MessageBroadcaster(chats=users_id, message=broadcast_message, reply_markup=keyboard).run()
