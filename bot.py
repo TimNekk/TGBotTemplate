@@ -5,7 +5,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.dispatcher.storage import BaseStorage
 from aiogram.types import AllowedUpdates
-from asyncio import run
 
 from aiogram.utils import executor
 from loguru import logger
