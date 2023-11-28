@@ -24,14 +24,14 @@ class SubscriptionMiddleware(BaseMiddleware):
     async def on_process_message(self, message: Message, data: dict) -> None:
         user = data.get('user')
         if not user:
-            raise KeyError(f"User not found in data")
+            raise KeyError("User not found in data")
 
         await self.check_subscriptions(message, user=user)
 
     async def on_process_callback_query(self, call: CallbackQuery, data: dict) -> None:
         user = data.get('user')
         if not user:
-            raise KeyError(f"User not found in data")
+            raise KeyError("User not found in data")
 
         await self.check_subscriptions(call.message, user=user,
                                        call=call, callback_data=data.get("callback_data"))
