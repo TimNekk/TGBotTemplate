@@ -28,6 +28,34 @@ class Commands:
 
 
 @dataclass
+class WebhookConfig:
+    host: str
+    port: int
+    path: str
+
+    def __post_init__(self) -> None:
+        self.path = f"/{self.path}"
+        self.url = f"{self.host}:{self.port}{self.path}"
+
+
+@dataclass
+class WebServerConfig:
+    host: str
+    port: int
+
+
+@dataclass
+class SSLConfig:
+    cert_file_name: str
+    key_file_name: str
+
+    def __post_init__(self) -> None:
+        directory = "certs/"
+        self.cert_file_path = f"{directory}{self.cert_file_name}"
+        self.key_file_path = f"{directory}{self.key_file_name}"
+
+
+@dataclass
 class DbConfig:
     host: str
     password: str
@@ -53,6 +81,11 @@ class TgBot:
     token: str
     admin_ids: List[int]
     use_redis: bool
+    skip_updates: bool
+    use_webhook: bool
+    webhook: WebhookConfig
+    web_server: WebServerConfig
+    ssl: SSLConfig
     commands: Commands
     subscription_channels_ids: List[int]
 
@@ -91,6 +124,21 @@ def load_config(path: str | None = None) -> Config:
             commands=Commands(
                 send_all=CommandInfo("send_all", "Запустить рассылку", is_admin=True),
                 ping=CommandInfo("ping", "Узнать пинг", is_admin=True),
+            ),
+            use_webhook=env.bool("USE_WEBHOOK"),
+            skip_updates=env.bool("SKIP_UPDATES"),
+            webhook=WebhookConfig(
+                host=env.str('WEBHOOK_HOST'),
+                port=env.str("WEBHOOK_PORT"),
+                path=env.str('WEBHOOK_PATH')
+            ),
+            web_server=WebServerConfig(
+                host=env.str('WEB_SERVER_HOST'),
+                port=env.int('WEB_SERVER_PORT')
+            ),
+            ssl=SSLConfig(
+                cert_file_name=env.str('SSL_CERT_FILE_NAME'),
+                key_file_name=env.str('SSL_KEY_FILE_NAME')
             )
         ),
         db=DbConfig(
