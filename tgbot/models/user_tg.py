@@ -6,6 +6,7 @@ from aiogram.types import base
 from aiogram.utils import exceptions
 from aiogram.utils.markdown import hlink
 from loguru import logger
+from the_retry import retry
 
 from tgbot.models.user import User
 
@@ -33,6 +34,7 @@ class UserTG(User):
     def url(self) -> str:
         return f"tg://user?id={self.id}"
 
+    @retry(expected_exception=exceptions.TelegramAPIError, attempts=4, backoff=2, exponential_backoff=True)
     async def _execute_telegram_send_action(
             self,
             action: typing.Callable,
@@ -46,8 +48,10 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+            raise
         return None
 
+    @retry(expected_exception=exceptions.TelegramAPIError, attempts=4, backoff=2, exponential_backoff=True)
     async def _execute_telegram_edit_action(
             self,
             action: typing.Callable,
@@ -64,6 +68,7 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+            raise
         return None
 
     async def send_message(
@@ -742,6 +747,7 @@ class UserTG(User):
                 proximity_alert_radius=proximity_alert_radius,
                 reply_markup=reply_markup)
 
+    @retry(expected_exception=exceptions.TelegramAPIError, attempts=4, backoff=2, exponential_backoff=True)
     async def delete_message(
             self,
             message_id: typing.Optional[base.Integer] = None,
@@ -755,8 +761,10 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+            raise
         return None
 
+    @retry(expected_exception=exceptions.TelegramAPIError, attempts=4, backoff=2, exponential_backoff=True)
     async def answer_callback_query(
             self,
             callback_query_id: base.String,
@@ -779,8 +787,10 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+            raise
         return None
 
+    @retry(expected_exception=exceptions.TelegramAPIError, attempts=4, backoff=2, exponential_backoff=True)
     async def forward_message(
             self,
             chat_id: typing.Union[base.Integer, base.String],
@@ -805,4 +815,5 @@ class UserTG(User):
             await self.update(is_banned=True).apply()
         except exceptions.TelegramAPIError as e:
             logger.exception(f"{self}: {e}")
+            raise
         return None
