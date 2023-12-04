@@ -7,3 +7,4 @@ loguru==0.6.0
 alembic==1.8.1
 psycopg2==2.9.3
 validators==0.20.0
+the_retry==0.1.1
